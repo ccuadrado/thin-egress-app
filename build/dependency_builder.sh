@@ -35,11 +35,12 @@ rm -rf easy_install.py
 rm -f typing.py # MUST be removed, its presence causes error every time
 
 cd ..
+
 mkdir -p "${depbuild}/out"
 
-echo "zipping to ${depbuild}/out/${ZIPFILENAME}".
+echo "zipping to ${depbuild}/out/${ZIPFILENAME}."
 
-zip -r9 "${depbuild}/out/${ZIPFILENAME}"
+zip -r9 "${depbuild}/out/${ZIPFILENAME}" .
 
 
 
