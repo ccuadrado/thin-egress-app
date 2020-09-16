@@ -122,9 +122,9 @@ pipeline {
             // we'll offload that to a amazonlinux:2 container
 
             // Create a working space, pull in dependencies
-            sh "echo '>> Gathering Dependencies....'"
+            //sh "echo '>> Gathering Dependencies....'"
 
-            sh "cd ${WORKSPACE}"
+            //sh "cd ${WORKSPACE}"
 
             // Make sure we get all the requirements:
             //sh "cp ${WORKSPACE}/rain-api-core/requirements.txt ${WORKSPACE}/lambda/requirements_rain-api-core.txt"
@@ -133,11 +133,16 @@ pipeline {
         }
         container('layer-builder') {
             sh 'mkdir -p $DEPBUILD'
-            sh 'ZIPFILENAME=${DEPENDENCYLAYERFILENAME} && ${WORKSPACE}/build/dependency_builder.sh && echo "zipping to $DEPBUILD"'
+            sh '${WORKSPACE}/build/dependency_builder.sh && echo "built to $DEPBUILD"'
+
+            sh 'echo "finished depbuilder, now looking in some dirs" && cd "$DEPBUILD/out" && ls -lah && tree'
+
+
+
         }
         container('tea-container') {
             //sh 'mkdir ${WORKSPACE}/build/${DEPENDENCYLAYERFILENAME} zip  ${WORKSPACE}/build/${DEPENDENCYLAYERFILENAME}'
-            sh 'echo "looking in $DEPBUILD for results of dependency_builder.sh" && cd "$DEPBUILD" && tree'
+            //sh 'echo "looking in $DEPBUILD for results of dependency_builder.sh" && cd "$DEPBUILD" && tree'
         }
       }
    }

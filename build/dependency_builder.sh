@@ -2,7 +2,7 @@
 
 # requirements.txt should be at /depbuild/in/requirements.txt
 # output goes /depbuild/out
-# ZIPFILENAME
+# DEPENDENCYLAYERFILENAME
 
 export depbuild=${DEPBUILD:-"/depbuild"}
 echo "RUNNING dependency_builder.sh"
@@ -35,12 +35,16 @@ rm -rf easy_install.py
 rm -f typing.py # MUST be removed, its presence causes error every time
 
 cd ..
+# now in pkg/
+
 
 mkdir -p "${depbuild}/out"
 
-echo "zipping to ${depbuild}/out/${ZIPFILENAME}."
+echo "zipping dependencies to ${depbuild}/out/${DEPENDENCYLAYERFILENAME}."
 
-zip -r9 "${depbuild}/out/${ZIPFILENAME}" .
+ls -lah
+
+zip -r9 "${depbuild}/out/${DEPENDENCYLAYERFILENAME}" .
 
 
 
