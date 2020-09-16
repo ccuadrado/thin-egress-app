@@ -12,6 +12,12 @@ spec:
          - "tail"
          - "-f"
          - "/dev/null"
+    volumeMounts:
+      - mountPath: "/depbuild/in"
+        name: depbuild-in
+      - mountPath: "/depbuild/out"
+        name: depbuild-out
+
   - name: layer-builder
     image: amazonlinux:2
     command:
@@ -24,8 +30,9 @@ spec:
       - mountPath: "/depbuild/out"
         name: depbuild-out
         readOnly: false
+
   volumes:
     - name: depbuild-in
-      emptyDir: {/dependency_builder.sh}
+      emptyDir: {}
     - name: depbuild-out
-      emptyDir: {/dependency_builder.sh}
+      emptyDir: {}

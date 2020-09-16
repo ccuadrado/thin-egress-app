@@ -4,9 +4,15 @@
 # output goes /depbuild/out
 # ZIPFILENAME
 
+export depbuild=${DEPBUILD:-"/depbuild/"}
+echo "RUNNING dependency_builder.sh"
+echo "depbuild: ${depbuild}"
+echo "inside dependency building container env:"
+printenv
+
 yum update -y
 yum install -y zip python3-devel python3-pip
-export depbuild=${DEPBUILD:-"/depbuild/"}
+
 
 mkdir -p ${depbuild}pkg/python
 
@@ -30,8 +36,10 @@ rm -f typing.py # MUST be removed, its presence causes error every time
 
 cd ..
 
+echo "zipping to ${depbuild}out/${ZIPFILENAME}".
+
 zip -r9 "${depbuild}out/${ZIPFILENAME}"
 
-echo "zipping to ${depbuild}out/${ZIPFILENAME}".
+
 
 echo "all done"
