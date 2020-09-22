@@ -120,6 +120,7 @@ pipeline {
 
     // Download and package dependencies
     stage('Package Dependency Layer') {
+      when { branch 'XXXXXX' }
       steps {
         container('layer-builder') {
 
@@ -132,6 +133,7 @@ pipeline {
    }
     // Package code
     stage('Package Code') {
+      when { branch 'XXXXXX' }
       steps {
         container('tea-container') {
             // Zip up the upload.
@@ -169,6 +171,7 @@ pipeline {
    }
    // Push packages to AWS and deploy new version
    stage('Push to AWS') {
+      when { branch 'XXXXXX' }
       steps {
         container('tea-container') {
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWSCREDS}"]])  {
@@ -263,6 +266,7 @@ pipeline {
 
     // Run download test script
     stage('Validate AWS Deployment'){
+      when { branch 'XXXXXX' }
       steps {
             container('tea-container') {
                 // Load up AWS + URS credentials
@@ -281,14 +285,27 @@ pipeline {
       steps {
       container('tea-container') {
 
-
-                sh('''
+        sshagent(['benbart_github_rsa']) {
+            sh('''
+                #!/usr/bin/env bash
+                set +x
+                # If no host key verification is needed, use the option `-oStrictHostKeyChecking=no`
+                export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
+                git config user.email 'bbarton@.alaska.edu'
+                git config user.name 'benbart'
+                git status
+                git tag  ${BUILDTAG}
+                git push origin ${BUILDTAG}
+            ''')
+        }
+/*                sh('''
+                    GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
                     git config user.email 'jenkins@jenkins.asf.alaska.edu'
                     git config user.name 'jenkins'
                     git tag  ${BUILDTAG}
                     git push origin ${BUILDTAG}
                 ''')
-
+*/
             // Use existing creds
 //             sh("git config user.email 'jenkins@jenkins.asf.alaska.edu'")
 //             sh("git config user.name 'jenkins'")
