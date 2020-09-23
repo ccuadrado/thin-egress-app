@@ -5,7 +5,7 @@ pipeline {
     string(name: 'APPTAG', defaultValue: 'teatest', description: '')
     choice(name: 'MATURITY', choices: ['DEV', 'INT', 'TEST', 'PROD'], description: 'The MATURITY (AWS) account to deploy')
 
-    choice(name: 'CHAT_ROOM', choices: ['RAIN-JENKINSNOTIFICATIONS', 'raindev', 'rain', 'bbarton-scratch'], description: 'MatterMost chat room to post notifications during deployment')
+    choice(name: 'CHAT_ROOM', choices: ['rain-jenkinsnotifications', 'raindev', 'rain', 'bbarton-scratch'], description: 'MatterMost chat room to post notifications during deployment')
     credentials(
       name: 'CHATHOST',
       credentialType: 'com.cloudbees.plugins.credentials.impl.SecretTextCredentialsImpl',
@@ -83,7 +83,7 @@ pipeline {
         container('tea-container') {
 
             // Send chat notification
-            mattermostSend channel: "${CHAT_ROOM}", color: '#EAEA5C', endpoint: "${env.CHATHOST}", message: "Build started: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>). See (<{$env.RUN_CHANGES_DISPLAY_URL}|Changes>)."
+            mattermostSend channel: "${CHAT_ROOM}", color: '#EAEA5C', endpoint: "${params.CHATHOST}", message: "Build started: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>). See (<{$env.RUN_CHANGES_DISPLAY_URL}|Changes>)."
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWSCREDS}"]]) {
               // Dump ENV
               sh 'tree'
@@ -292,12 +292,17 @@ pipeline {
                 set +x
                 # If no host key verification is needed, use the option `-oStrictHostKeyChecking=no`
                 export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
-                git config user.email 'bbarton@.alaska.edu'
-                git config user.name 'benbart'
+                
                 git status
-                git tag  ${BUILDTAG}
-                git push origin ${BUILDTAG}
+
             ''')
+            /*
+            git config user.email 'bbarton@.alaska.edu'
+                git config user.name 'benbart'
+
+            git tag  ${BUILDTAG}
+                git push origin ${BUILDTAG}
+            */
         }
 /*                sh('''
                     GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
@@ -348,7 +353,7 @@ pipeline {
   // Send build status to Mattermost, Update build badge
   post {
     success {
-      mattermostSend channel: "${CHAT_ROOM}", color: '#CEEBD3', endpoint: "${env.CHATHOST}", message: "Build Successful: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+      mattermostSend channel: "${CHAT_ROOM}", color: '#CEEBD3', endpoint: "${params.CHATHOST}", message: "Build Successful: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
       sh "rm -rf /tmp/buildreport && mkdir -p /tmp/buildreport/"
 
       sh """ echo '{ "schemaVersion": 1, "label": "Build Status", "message": "Success", "color": "success" }' > /tmp/buildreport/buildstatus.json """
@@ -366,7 +371,7 @@ pipeline {
 
       sh """ echo '{ "schemaVersion": 1, "label": "Build Status", "message": "Failed!", "color": "critical" }' > /tmp/buildreport/buildstatus.json """
       sh """ echo '{ "schemaVersion": 1, "label": "Last Build ", "message": "'$BUILDTAG'", "color": "critical" }'  > /tmp/buildreport/lastbuild.json """
-      mattermostSend channel: "${CHAT_ROOM}", color: '#FFBDBD', endpoint: "${env.CHATHOST}", message: "Build Failed:  ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+      mattermostSend channel: "${CHAT_ROOM}", color: '#FFBDBD', endpoint: "${params.CHATHOST}", message: "Build Failed:  ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
       withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWSCREDS}"]])  {
         sh """ ${AWS_BIN} s3 cp --metadata-directive REPLACE --cache-control no-cache \
                          --expires '2016-06-14T00:00:00Z' --content-type 'application/json' \
