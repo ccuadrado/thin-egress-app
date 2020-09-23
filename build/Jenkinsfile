@@ -355,7 +355,8 @@ pipeline {
   // Send build status to Mattermost, Update build badge
   post {
     success {
-      mattermostSend channel: "${CHAT_ROOM}", color: '#CEEBD3', endpoint: "${env.CHATSERVER_SECRET_URL}"", message: "Build Successful: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+    container('tea-container') {
+      mattermostSend channel: "${CHAT_ROOM}", color: '#CEEBD3', endpoint: "${env.CHATSERVER_SECRET_URL}", message: "Build Successful: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
       sh "rm -rf /tmp/buildreport && mkdir -p /tmp/buildreport/"
 
       sh """ echo '{ "schemaVersion": 1, "label": "Build Status", "message": "Success", "color": "success" }' > /tmp/buildreport/buildstatus.json """
@@ -368,7 +369,9 @@ pipeline {
                          s3://asf.public.code/thin-egress-app/ --acl public-read """
       }
     }
+    }
     failure {
+    container('tea-container') {
       sh "rm -rf /tmp/buildreport && mkdir -p /tmp/buildreport/"
 
       sh """ echo '{ "schemaVersion": 1, "label": "Build Status", "message": "Failed!", "color": "critical" }' > /tmp/buildreport/buildstatus.json """
@@ -382,6 +385,7 @@ pipeline {
       sh 'tree'
       sh 'printenv'
       }
+    }
     }
   }
 }
