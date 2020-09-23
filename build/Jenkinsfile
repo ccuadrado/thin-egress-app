@@ -299,6 +299,7 @@ pipeline {
                 echo '>> Creating Build Tag'
                 git tag -a ${BUILDTAG} -m "versioning ${BUILDTAG}"
                 git push origin ${BUILDTAG}
+                printenv
             ''')
             /*
             git config user.email 'bbarton@.alaska.edu'
