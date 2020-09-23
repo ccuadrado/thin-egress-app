@@ -296,6 +296,8 @@ pipeline {
                 git status
                 git checkout $GIT_BRANCH
                 git status
+                echo '>> Creating Build Tag'
+                git tag -a ${BUILDTAG} -m "versioning ${BUILDTAG}"
 
             ''')
             /*
