@@ -116,12 +116,6 @@ variable "log_level" {
   description = "Python loglevel."
 }
 
-variable "log_type" {
-  type        = string
-  default     = null
-  description = "Type of log entry."
-}
-
 variable "maturity" {
   type        = string
   default     = null
