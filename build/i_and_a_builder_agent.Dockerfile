@@ -1,7 +1,7 @@
 FROM ubuntu
 
 RUN apt-get update && \
-    apt-get -y install curl python3 python3-pip git vim tree zip && \
+    apt-get -y install curl python3 python3-pip git vim tree zip jq && \
     pip3 install -U pip && \
     pip3 install awscli boto3 requests pytest
 
@@ -12,9 +12,9 @@ RUN apt-get clean && apt-get install -y apt-transport-https gnupg2 && \
     apt-get install -y kubectl
 
 # Rebuild instructions:
-#   docker build -f i_and_a_builder_agent.Dockerfile -t i_and_a_builder_agent .
-#   registry="docker-registry.asf.alaska.edu:5000"
 #   apptag="i_and_a_builder_agent"
+#   docker build -f i_and_a_builder_agent.Dockerfile -t "$apptag" .
+#   registry="docker-registry.asf.alaska.edu:5000"
 #   appjustbuilt=$(docker images -q "$apptag")
 #   docker tag ${appjustbuilt} ${registry}/${apptag}
 #   docker push ${registry}/${apptag}
