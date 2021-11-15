@@ -344,7 +344,8 @@ class cors_test(unittest.TestCase):
         header_name = 'Access-Control-Allow-Origin'
 
         header_value = r.headers.get(header_name)
-        log.info(f"{header_name} had value '{origin_host}' (Expect {origin_host})")
+        log.info(f"{header_name} had value '{header_value}' (Expect {origin_host})")
+        log.info(f"origin_host had type: {type(header_value)} expected the type: {type(origin_host)}")
         self.assertTrue(header_value == origin_host)
 
     def access_control_allow_creds_test(self, r):
