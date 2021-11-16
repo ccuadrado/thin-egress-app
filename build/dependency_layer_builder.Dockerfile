@@ -1,4 +1,4 @@
-FROM amazonlinux:2
+FROM docker-registry.asf.alaska.edu:5000/i_and_a_nimbus_api_py38:20211013.1
 
 
 ENV ZIPFILENAME=asf-ursdependencylayer.zip
