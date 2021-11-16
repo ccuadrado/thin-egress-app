@@ -26,8 +26,6 @@ echo "Installing ${WORKSPACE}/rain-api-core/requirements.txt"
 python3 -m pip install -r ${WORKSPACE}/rain-api-core/requirements.txt --target .
 echo "Installing ${WORKSPACE}/lambda/requirements.txt"
 python3 -m pip install -r ${WORKSPACE}/lambda/requirements.txt --target .
-python3 -m pip uninstall cryptography
-pyton3 -m pip install cryptography==35.0.0
 
 
 # get rid of unneeded things to make code zip smaller
